@@ -19,7 +19,6 @@ jobs:
           run: mvn clean verify  
 
         - name: sonar scan 
-          uses: SonarSource/sonarcloud-github-action@v2
           run: | 
             mvn sonar:sonar \
             -Dsonar.projectKey=Mygit-personal_spring-petclinic \
