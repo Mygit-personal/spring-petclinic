@@ -12,6 +12,7 @@ jobs:
       steps:
         - name: git checkout
           uses: actions/checkout@v4
+          
         - name: Build java with maven
           run: mvn package
 
@@ -24,4 +25,4 @@ jobs:
             -Dsonar.projectKey=Mygit-personal_spring-petclinic \
             -Dsonar.organization=Mygit-personal \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login = ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
