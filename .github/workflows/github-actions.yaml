@@ -19,7 +19,10 @@ jobs:
           run: mvn clean verify  
         - name: sonar scan 
           uses: SonarSource/sonarcloud-github-action@v2
-          env:
-            SONAR_TOKEN : ${{ secrets.SONAR_TOKEN }} 
+          run: mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+            -Dsonar.organization=mygit-personal \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
         
