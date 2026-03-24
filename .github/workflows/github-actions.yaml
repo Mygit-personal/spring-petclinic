@@ -17,8 +17,8 @@ jobs:
 
         - name: build & sonar scan
           run: mvn clean verify sonar:sonar \
-            -Dsonar.projectKey= Mygit-personal_spring-petclinic \
-            -Dsonar.login= ${{secrets.SONAR_TOKEN}} \
-            -Dsonar.host.url = ${{secrets.SONAR_HOST_URL}}
+            -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+            -Dsonar.login=${{secrets.SONAR_TOKEN}} \
+            -Dsonar.host.url=${{secrets.SONAR_HOST_URL}}
 
         
