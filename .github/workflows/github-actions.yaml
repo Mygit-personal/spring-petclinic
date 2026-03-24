@@ -15,11 +15,10 @@ jobs:
         - name: Build java with maven
           run: mvn package
 
-        - name: build & sonar scan
-          run: | 
-            mvn package sonar:sonar \
-            -Dsonar.projectKey=Mygit-personal_spring-petclinic \
-            -Dsonar.login=${{secrets.SONAR_TOKEN}} \
-            -Dsonar.host.url=${{secrets.SONAR_HOST_URL}}
+        - name: build 
+          run: mvn clean verify  
+        - name: sonar scan 
+          uses: SonarSource/sonarqube-scan-action@v7
+            SONAR_TOKEN = ${{ secrets.SONAR_TOKEN }} 
 
         
