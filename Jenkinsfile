@@ -52,16 +52,4 @@ pipeline {
     }
   }
 
-  // post {
-  //   success {
-  //     ansiColor('xterm') {
-  //       echo "\u001B[32m🚀 PIPELINE SUCCESS\u001B[0m"
-  //     }
-  //   }
-  //   failure {
-  //     ansiColor('xterm') {
-  //       echo "\u001B[31m🔥 PIPELINE FAILED\u001B[0m"
-  //     }
-  //   }
-  // }
 }
