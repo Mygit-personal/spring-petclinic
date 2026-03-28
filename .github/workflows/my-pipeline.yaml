@@ -18,7 +18,7 @@ jobs:
 
       - name: sonar scan
         run: |
-          mvn sonar:sonar \
+          mvn package sonar:sonar \
           -Dsonar.projectKey=Mygit-personal_spring-petclinic \
           -Dsonar.organization=mygit-personal \
           -Dsonar.host.url=https://sonarcloud.io \ 
