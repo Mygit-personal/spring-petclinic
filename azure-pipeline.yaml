@@ -12,6 +12,9 @@ stages:
       - job: "build"
         steps:
 
+          - checkout: self
+            fetchDepth: 0
+
           - task: SonarCloudPrepare@4
             displayName: Sonar Cloud Analysis 
             inputs: 
