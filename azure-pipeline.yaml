@@ -3,6 +3,7 @@ triggers:
 
 pool: "Default"
 
+
 stages:
   - stage: "maven build"
     jobs:
