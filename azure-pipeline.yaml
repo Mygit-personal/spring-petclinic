@@ -30,15 +30,21 @@ stages:
               goals: 'package'
               publishJUnitResults: true
               testResultsFiles: '**/surefire-reports/TEST-*.xml'
-          
-          - task: SonarCloudAnalyze@4
-            displayName: "Run Sonar Analysis"
 
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'sonar:sonar'
+              options: "-Dsonar.token= $(SONAR_CLOUD_TOKEN)
+                        -Dsonar.projectKey=Mygit-personal_spring-petclinic
+                        -Dsonar.organization=mygit-personal
+                        "
+              publishJUnitResults: false
+          
           - task: SonarCloudPublish@4
             displayName: "Sonar Publish Gate Result"
             inputs:
               pollingTimeoutSec: '300'
-
 
           - task: PublishPipelineArtifact@1
             inputs:
