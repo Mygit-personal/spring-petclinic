@@ -27,7 +27,9 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              goals: 'package'
+              goals: 'clean verify sonar:sonar'
+              options: "-Dsonar.projectKey=Mygit-personal_spring-petclinic 
+                        -Dsonar.organization=mygit-personal"
               publishJUnitResults: true
               testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
