@@ -15,7 +15,7 @@ stages:
           - checkout: self
             fetchDepth: 0
 
-          - task: SonarCloudPrepare@4
+          - task: SonarCloudPrepare@1
             displayName: Sonar Cloud Analysis 
             inputs: 
               SonarCloud: "sonar-token"
@@ -31,17 +31,17 @@ stages:
               publishJUnitResults: true
               testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
-          - task: Maven@3
-            inputs:
-              mavenPomFile: 'pom.xml'
-              goals: 'sonar:sonar'
-              options: "-Dsonar.token= $(SONAR_CLOUD_TOKEN)
-                        -Dsonar.projectKey=Mygit-personal_spring-petclinic
-                        -Dsonar.organization=mygit-personal
-                        "
-              publishJUnitResults: false
+          # - task: Maven@3
+          #   inputs:
+          #     mavenPomFile: 'pom.xml'
+          #     goals: 'sonar:sonar'
+          #     options: "-Dsonar.token= $(SONAR_CLOUD_TOKEN)
+          #               -Dsonar.projectKey=Mygit-personal_spring-petclinic
+          #               -Dsonar.organization=mygit-personal
+          #               "
+          #     publishJUnitResults: false
           
-          - task: SonarCloudPublish@4
+          - task: SonarCloudPublish@1
             displayName: "Sonar Publish Gate Result"
             inputs:
               pollingTimeoutSec: '300'
