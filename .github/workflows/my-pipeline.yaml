@@ -12,3 +12,6 @@ jobs:
     steps:
       - name: git checkout
         uses: actions/checkout@v2
+        
+      - name: build java maven
+        run: mvn package 
