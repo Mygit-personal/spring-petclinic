@@ -41,6 +41,9 @@ stages:
           #               "
           #     publishJUnitResults: false
           
+          - task: SonarCloudAnalyze@1
+            displayName: "Run Sonar Analysis"
+
           - task: SonarCloudPublish@1
             displayName: "Sonar Publish Gate Result"
             inputs:
