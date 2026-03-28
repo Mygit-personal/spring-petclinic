@@ -3,6 +3,8 @@ trigger:
 
 pool: "default"
 
+variables:
+  - group: SONAR
 
 stages:
   - stage: "maven_build"
