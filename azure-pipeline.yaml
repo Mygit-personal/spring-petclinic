@@ -1,0 +1,23 @@
+triggers:
+  - main
+
+pool: "Default"
+
+stages:
+  - stage: "maven build"
+    jobs:
+      - job: "build"
+      steps:
+        - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'package'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: $(System.DefaultWorkingDirectory)
+            artifactName: drop
+
+
