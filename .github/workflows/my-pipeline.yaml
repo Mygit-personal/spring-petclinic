@@ -20,9 +20,9 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
-            -Dsonar.projectKey = Mygit-personal_spring-petclinic \
-            -Dsonar.organization = Mygit-personal \
-            -Dsonar.host.url = https://sonarcloud.io/ \
+            -Dsonar.projectKey = Mygit-personal_spring-petclinic
+            -Dsonar.organization = Mygit-personal
+            -Dsonar.host.url = https://sonarcloud.io
         env: 
           SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
 
