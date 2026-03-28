@@ -30,5 +30,33 @@ pipeline {
         }}
       }
     }
-  }
+
+        stage ("docker push to ECR") {
+      steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: '3e91013f-e0ea-4040-a7b6-ee001d202792'
+        ]]) {
+
+          sh '''
+            # Login to ECR (secure way)
+            aws ecr get-login-password --region ap-south-1 | docker login \
+            --username AWS \
+            --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
+
+            # Pull image
+            docker pull nginx:1.29
+
+            # Tag image
+            docker tag nginx:1.29 \
+            984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+
+            # Push image
+            docker push \
+            984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+          '''
+        }
+      }
+    }
+  }  
 }
