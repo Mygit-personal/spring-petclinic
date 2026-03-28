@@ -36,7 +36,7 @@ stages:
                         "
               publishJUnitResults: false
           
-          - task: SonarQubePublish@5
+          - task: SonarQubePublish@4
             inputs:
               pollingTimeoutSec: '300'
 
