@@ -1,0 +1,13 @@
+name: GitHub Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  
+jobs:
+  name: my-spc
+  runs-on: self-hosted
+  steps:
+    - name: git checkout
+      uses: actions/checkout@v2
