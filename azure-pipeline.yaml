@@ -41,7 +41,7 @@ stages:
                         "
               publishJUnitResults: false
           
-          - task: SonarQubePublish@1
+          - task: SonarCloudPublish@4
             displayName: "Sonar Publish Gate Result"
             inputs:
               pollingTimeoutSec: '300'
