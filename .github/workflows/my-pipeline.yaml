@@ -17,13 +17,11 @@ jobs:
         run: mvn package 
 
       - name: sonar scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=Mygit-personal_spring-petclinic
-            -Dsonar.organization=Mygit-personal
-            -Dsonar.host.url=https://sonarcloud.io
-        env: 
-          SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+        run: |
+          mvn sonar:sonar \
+          -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+          -Dsonar.organization=Mygit-personal \
+          -Dsonar.host.url=https://sonarcloud.io \ 
+          _dsonar.login=${{secrets.SONAR_TOKEN}}
 
       
