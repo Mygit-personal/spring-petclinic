@@ -34,21 +34,14 @@ pipeline {
     stage ("docker push to ECR") {
       steps {
         sh '''
-          # Login to ECR (secure way)
-          aws ecr get-login-password --region ap-south-1 | docker login \
-          --username AWS \
-          --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
-
-          # Pull image
           docker pull nginx:1.29
+          
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
 
-          # Tag image
-          docker tag nginx:1.29 \
-          984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+          docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
 
-          # Push image
-          docker push \
-          984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+          docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+
         '''
       }
     }
