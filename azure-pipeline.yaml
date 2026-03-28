@@ -9,12 +9,37 @@ stages:
     jobs:
       - job: "build"
         steps:
+
+          - task: SonarCloudPrepare@4
+            displayName: Sonar Cloud Analysis 
+            inputs: 
+              SonarCloud: "sonar-token"
+              organization: "mygit-personal"
+              scannerMode: 'Other'
+              projectKey: 'Mygit-personal_spring-petclinic'
+              projectName: 'petclinic'
+
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
               goals: 'package'
               publishJUnitResults: true
               testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'sonar:sonar'
+              options: "-Dsonar.token= $(SONAR_CLOUD_TOKEN)
+                        -Dsonar.projectKey=Mygit-personal_spring-petclinic
+                        -Dsonar.organization=mygit-personal
+                        "
+              publishJUnitResults: false
+          
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
+
 
           - task: PublishPipelineArtifact@1
             inputs:
