@@ -5,7 +5,7 @@ pool: "default"
 
 
 stages:
-  - stage: "maven build"
+  - stage: "maven_build"
     jobs:
       - job: "build"
         steps:
