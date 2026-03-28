@@ -10,5 +10,11 @@ pipeline {
           branch: "main"
       }
     }
+
+    stage ("maven") {
+      steps {
+        sh "mvn packege"
+      }
+    }
   }
 }
