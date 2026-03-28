@@ -1,7 +1,7 @@
-triggers:
+trigger:
   - main
 
-pool: "Default"
+pool: "default"
 
 
 stages:
