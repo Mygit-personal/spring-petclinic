@@ -35,7 +35,7 @@ pipeline {
     //       """
     //     }}
     //   }
-    }
+    
 
     // stage ("docker push to ECR") {
     //   steps {
