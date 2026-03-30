@@ -1,0 +1,55 @@
+trigger:
+  - main
+
+pool: "default"
+
+variables:
+  - group: SONAR
+
+stages:
+  - stage: "maven_build"
+    jobs:
+      - job: "build"
+        steps:
+
+          - checkout: self
+            fetchDepth: 0
+
+          - task: SonarCloudPrepare@4
+            displayName: Sonar Cloud Analysis 
+            inputs: 
+              SonarCloud: "sonar-token"
+              organization: "mygit-personal"
+              scannerMode: 'Other'
+              projectKey: 'Mygit-personal_spring-petclinic'
+              projectName: 'petclinic'
+
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'clean verify sonar:sonar'
+              options: "-Dsonar.projectKey=Mygit-personal_spring-petclinic 
+                        -Dsonar.organization=mygit-personal"
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+          
+          - task: SonarCloudPublish@4
+            displayName: "Sonar Publish Gate Result"
+            inputs:
+              pollingTimeoutSec: '300'
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+                targetPath: $(System.DefaultWorkingDirectory)
+                artifactName: drop
+
+          - task: Bash@3
+            inputs: 
+              targetType: 'inline'
+              script: |
+                docker pull nginx:1.29  
+                aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
+                docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+                docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+
