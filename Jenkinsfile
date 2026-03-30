@@ -1,5 +1,11 @@
 pipeline {
-  agent {label "spc"}
+  agent {label "SPC-JAVA"}
+  
+  environment {
+    image_name = 'spc'
+    tag_name = '1.0'
+  }
+  
   triggers {
     pollSCM("* * * * *")
   }
@@ -31,18 +37,44 @@ pipeline {
       }
     }
 
-    stage ("docker push to ECR") {
+    // stage ("docker push to ECR") {
+    //   steps {
+    //     sh '''
+    //       docker pull nginx:1.29
+    //       aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
+    //       docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+    //       docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+
+    //     '''
+    //   }
+    // }
+
+    stage ('docker image') {
       steps {
-        sh '''
-          docker pull nginx:1.29
-          
-          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
+        sh 'docker image build -t ${image_name}:${tag_name} .'
+      }
+    }
 
-          docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+    stage ('trivy') {
+      steps {
+        sh 'trivy image ${image_name}:${tag_name}'
+      }
+    }
 
-          docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+    stage ('image push to ECR') {
+      steps {
+        sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
+            docker tag ${image_name}:${tag_name} 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest && \
+            docker image ls && \
+            docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest
 
-        '''
+            '
+      }
+    }
+
+    stage ('deploy K8S') {
+      steps {
+        sh 'kubectl apply -f deploy-k8s/.'
       }
     }
   }  
