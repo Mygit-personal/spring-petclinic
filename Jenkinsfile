@@ -57,12 +57,12 @@ pipeline {
 
     stage ('trivy') {
       steps {
-        sh """trivy image \
+        sh '''trivy image \
             --format template \
             --template "@contrib/junit.tpl" \
-            -o trivy-report.xml \   
+            -o trivy-report.xml \
             ${image_name}:${tag_name}
-            """
+            '''
       }
     }
 
@@ -71,7 +71,7 @@ pipeline {
         junit 'trivy-report.xml'
       }
     }
-    
+
     stage ('image push to ECR') {
       steps {
         sh """aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
