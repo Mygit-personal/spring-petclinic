@@ -70,8 +70,9 @@ pipeline {
       }
     }
 
-    stage ('trivy gate') {
-      steps {
+  stage ('trivy gate') {
+    steps {
+      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh '''
           trivy image \
             --scanners vuln \
@@ -81,6 +82,9 @@ pipeline {
         '''
       }
     }
+  }
+
+
 
     
 
@@ -102,9 +106,9 @@ pipeline {
 
   }
 
-    post {
-    always {
-      junit allowEmptyResults: true, testResults: 'trivy-report.xml'
-    }
+post {
+  always {
+    junit allowEmptyResults: true, testResults: 'trivy-report.xml'
   }
+}
 }
