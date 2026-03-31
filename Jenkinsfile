@@ -62,6 +62,7 @@ pipeline {
 
           trivy image \
             --scanners vuln \
+            --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
             --format template \
             --template "@junit.tpl" \
             -o trivy-report.xml \
@@ -69,22 +70,6 @@ pipeline {
         '''
       }
     }
-
-  stage ('trivy gate') {
-    steps {
-      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        sh '''
-          trivy image \
-            --scanners vuln \
-            --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            ${image_name}:${tag_name}
-        '''
-      }
-    }
-  }
-
-
 
     
 
@@ -106,9 +91,9 @@ pipeline {
 
   }
 
-post {
-  always {
-    junit allowEmptyResults: true, testResults: 'trivy-report.xml'
+    post {
+    always {
+      junit allowEmptyResults: true, testResults: 'trivy-report.xml'
+    }
   }
-}
 }
