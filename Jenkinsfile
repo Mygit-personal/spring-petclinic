@@ -84,10 +84,11 @@ pipeline {
   //   }
   // }  
 
+  }
+
     post {
-      always {
-        junit 'trivy-report.xml'
-      }
+    always {
+      junit 'trivy-report.xml'
     }
   }
 }
