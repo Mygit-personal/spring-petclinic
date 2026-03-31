@@ -62,7 +62,7 @@ pipeline {
 
               trivy image \
             --format template \
-            --template "@contrib/junit.tpl" \
+            --template "@junit.tpl" \
             -o trivy-report.xml \
             ${image_name}:${tag_name}
             '''
@@ -91,7 +91,7 @@ pipeline {
 
     post {
     always {
-      junit 'trivy-report.xml'
+      junit allowEmptyResults: true, testResults: 'trivy-report.xml'
     }
   }
 }
