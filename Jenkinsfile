@@ -60,13 +60,20 @@ pipeline {
         sh '''
           curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
+          # Run scan but DO NOT fail immediately
+          trivy image \
+            --scanners vuln \
+            --severity HIGH,CRITICAL \
+            --format template \
+            --template "@junit.tpl" \
+            -o trivy-report.xml \
+            ${image_name}:${tag_name}
+
+          # Capture exit manually
           trivy image \
             --scanners vuln \
             --severity HIGH,CRITICAL \
             --exit-code 1 \
-            --format template \
-            --template "@junit.tpl" \
-            -o trivy-report.xml \
             ${image_name}:${tag_name}
         '''
       }
