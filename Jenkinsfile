@@ -60,7 +60,8 @@ pipeline {
         sh '''
               curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
-              trivy image \
+            trivy image \
+            --scanners vuln \
             --format template \
             --template "@junit.tpl" \
             -o trivy-report.xml \
