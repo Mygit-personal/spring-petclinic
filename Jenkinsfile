@@ -57,7 +57,10 @@ pipeline {
 
     stage ('trivy') {
       steps {
-        sh '''trivy image \
+        sh '''
+              curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+
+              trivy image \
             --format template \
             --template "@contrib/junit.tpl" \
             -o trivy-report.xml \
