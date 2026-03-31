@@ -66,11 +66,7 @@ pipeline {
       }
     }
 
-    post {
-      always {
-        junit 'trivy-report.xml'
-      }
-    }
+    
 
     stage ('image push to ECR') {
       steps {
@@ -87,4 +83,11 @@ pipeline {
       }
     }
   }  
+
+  post {
+    always {
+      junit 'trivy-report.xml'
+    }
+  }
+
 }
