@@ -91,9 +91,10 @@ pipeline {
 
   }
 
-    post {
-    always {
-      junit allowEmptyResults: true, testResults: 'trivy-report.xml'
-    }
+  post {
+  always {
+    archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
+    junit allowEmptyResults: true, testResults: 'trivy-report.xml'
   }
+}
 }
