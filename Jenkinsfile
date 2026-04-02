@@ -104,8 +104,6 @@ pipeline {
     }
   }  
 
-  }
-
   post {
   always {
     archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
