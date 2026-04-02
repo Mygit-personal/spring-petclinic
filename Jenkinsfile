@@ -17,25 +17,40 @@ pipeline {
       }
     }
 
-    // stage ("maven") {
-    //   steps {
-    //     sh "mvn package"
-    //   }
-    // }
+    stage ("maven") {
+      steps {
+        sh "mvn package"
+      }
+    }
 
-    // stage ("sonar scan") {
-    //   steps{
-    //     withCredentials([string(credentialsId: 'sonar_id', variable:"SONAR_TOKEN")]){
-    //     withSonarQubeEnv("Sonar"){
-    //       sh """mvn package sonar:sonar \
-    //           -Dsonar.projectKey=Mygit-personal_spring-petclinic \
-    //           -Dsonar.organization=mygit-personal \
-    //           -Dsonar.host.url=https://sonarcloud.io/ \
-    //           -Dsonar.login=$SONAR_TOKEN
-    //       """
-    //     }}
-    //   }
-    
+    stage ("sonar scan") {
+      steps{
+        withCredentials([string(credentialsId: 'SONAR_ID', variable:"SONAR_TOKEN")]){
+        withSonarQubeEnv("Sonar"){
+          sh """mvn package sonar:sonar \
+              -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+              -Dsonar.organization=mygit-personal \
+              -Dsonar.host.url=https://sonarcloud.io/ \
+              -Dsonar.login=$SONAR_TOKEN
+          """
+        }}
+      }
+    }
+
+    stage("Quality Gate") {
+      steps {
+        timeout(time: 5, unit: 'MINUTES') {
+          script {
+            def qg = waitForQualityGate()
+            if (qg.status != 'OK') {
+              error "❌ Pipeline stopped: Quality Gate failed"
+            } else {
+              echo "✅ Quality Gate passed"
+            }
+          }
+        }
+      }
+    }
 
     // stage ("docker push to ECR") {
     //   steps {
@@ -73,14 +88,14 @@ pipeline {
 
     
 
-  //   stage ('image push to ECR') {
-  //     steps {
-  //       sh """aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
-  //           docker tag ${image_name}:${tag_name} 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest && \
-  //           docker image ls && \
-  //           docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest"""
-  //     }
-  //   }
+    stage ('image push to ECR') {
+      steps {
+        sh """aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
+            docker tag ${image_name}:${tag_name} 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest && \
+            docker image ls && \
+            docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest"""
+      }
+    }
 
   //   stage ('deploy K8S') {
   //     steps {
