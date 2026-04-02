@@ -1,5 +1,5 @@
 pipeline {
-  agent {label "SPC-JAVA"}
+  agent {label "SPC"}
   
   environment {
     image_name = 'spc'
