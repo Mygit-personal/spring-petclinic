@@ -52,64 +52,64 @@ pipeline {
       }
     }
 
-    // stage ("docker push to ECR") {
-    //   steps {
-    //     sh '''
-    //       docker pull nginx:1.29
-    //       aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
-    //       docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
-    //       docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+    stage ("docker push to ECR") {
+      steps {
+        sh '''
+          docker pull nginx:1.29
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com
+          docker tag nginx:1.29 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
+          docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/prod/images:latest
 
-    //     '''
-    //   }
-    // }
+        '''
+      }
+    }
 
-    // stage ('docker image') {
-    //   steps {
-    //     sh 'docker image build -t ${image_name}:${tag_name} .'
-    //   }
-    // }
+    stage ('docker image') {
+      steps {
+        sh 'docker image build -t ${image_name}:${tag_name} .'
+      }
+    }
 
-    // stage ('trivy report') {
-    //   steps {
-    //     sh '''
-    //       curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+    stage ('trivy report') {
+      steps {
+        sh '''
+          curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
-    //       trivy image \
-    //         --scanners vuln \
-    //         --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
-    //         --format template \
-    //         --template "@junit.tpl" \
-    //         -o trivy-report.xml \
-    //         ${image_name}:${tag_name}
-    //     '''
-    //   }
-    // }
+          trivy image \
+            --scanners vuln \
+            --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+            --format template \
+            --template "@junit.tpl" \
+            -o trivy-report.xml \
+            ${image_name}:${tag_name}
+        '''
+      }
+    }
 
     
 
-    // stage ('image push to ECR') {
-    //   steps {
-    //     sh """aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
-    //         docker tag ${image_name}:${tag_name} 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest && \
-    //         docker image ls && \
-    //         docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest"""
-    //   }
-    // }
+    stage ('image push to ECR') {
+      steps {
+        sh """aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 984912521466.dkr.ecr.ap-south-1.amazonaws.com && \
+            docker tag ${image_name}:${tag_name} 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest && \
+            docker image ls && \
+            docker push 984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest"""
+      }
+    }
 
-  //   stage ('deploy K8S') {
-  //     steps {
-  //       sh 'kubectl apply -f deploy-k8s/.'
-  //     }
-  //   }
-  // }  
+    stage ('deploy K8S') {
+      steps {
+        sh 'kubectl apply -f deploy-k8s/.'
+      }
+    }
+  }  
 
   }
 
-  // post {
-  // always {
-  //     archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
-  //     junit allowEmptyResults: true, testResults: 'trivy-report.xml'
-  //   }
-  // }
+  post {
+  always {
+    archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
+    junit allowEmptyResults: true, testResults: 'trivy-report.xml'
+    }
+  }
 }
