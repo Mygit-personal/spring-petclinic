@@ -97,11 +97,11 @@ pipeline {
       }
     }
 
-    stage ('deploy K8S') {
-      steps {
-        sh 'kubectl apply -f deploy-k8s/.'
-      }
-    }
+    // stage ('deploy K8S') {
+    //   steps {
+    //     sh 'kubectl apply -f deploy-k8s/.'
+    //   }
+    // }
   }  
 
   post {
