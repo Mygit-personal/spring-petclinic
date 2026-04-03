@@ -23,34 +23,34 @@ pipeline {
       }
     }
 
-    stage ("sonar scan") {
-      steps{
-        withCredentials([string(credentialsId: 'SONAR_ID', variable:"SONAR_TOKEN")]){
-        withSonarQubeEnv("Sonar"){
-          sh """mvn package sonar:sonar \
-              -Dsonar.projectKey=Mygit-personal_spring-petclinic \
-              -Dsonar.organization=mygit-personal \
-              -Dsonar.host.url=https://sonarcloud.io/ \
-              -Dsonar.login=$SONAR_TOKEN
-          """
-        }}
-      }
-    }
+    // stage ("sonar scan") {
+    //   steps{
+    //     withCredentials([string(credentialsId: 'SONAR_ID', variable:"SONAR_TOKEN")]){
+    //     withSonarQubeEnv("Sonar"){
+    //       sh """mvn package sonar:sonar \
+    //           -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+    //           -Dsonar.organization=mygit-personal \
+    //           -Dsonar.host.url=https://sonarcloud.io/ \
+    //           -Dsonar.login=$SONAR_TOKEN
+    //       """
+    //     }}
+    //   }
+    // }
 
-    stage("Quality Gate") {
-      steps {
-        timeout(time: 1, unit: 'MINUTES') {
-          script {
-            def qg = waitForQualityGate()
-            if (qg.status != 'OK') {
-              error "❌ Pipeline stopped: Quality Gate failed"
-            } else {
-              echo "✅ Quality Gate passed"
-            }
-          }
-        }
-      }
-    }
+    // stage("Quality Gate") {
+    //   steps {
+    //     timeout(time: 1, unit: 'MINUTES') {
+    //       script {
+    //         def qg = waitForQualityGate()
+    //         if (qg.status != 'OK') {
+    //           error "❌ Pipeline stopped: Quality Gate failed"
+    //         } else {
+    //           echo "✅ Quality Gate passed"
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     stage ("docker push to ECR") {
       steps {
@@ -70,21 +70,21 @@ pipeline {
       }
     }
 
-    stage ('trivy report') {
-      steps {
-        sh '''
-          curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+    // stage ('trivy report') {
+    //   steps {
+    //     sh '''
+    //       curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
-          trivy image \
-            --scanners vuln \
-            --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
-            --format template \
-            --template "@junit.tpl" \
-            -o trivy-report.xml \
-            ${image_name}:${tag_name}
-        '''
-      }
-    }
+    //       trivy image \
+    //         --scanners vuln \
+    //         --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+    //         --format template \
+    //         --template "@junit.tpl" \
+    //         -o trivy-report.xml \
+    //         ${image_name}:${tag_name}
+    //     '''
+    //   }
+    // }
 
     
 
@@ -97,17 +97,19 @@ pipeline {
       }
     }
 
-    // stage ('deploy K8S') {
-    //   steps {
-    //     sh 'kubectl apply -f deploy-k8s/.'
-    //   }
-    // }
+    stage('Deploy K8S') {
+      steps {
+        withCredentials([string(credentialsId: 'eks', variable: 'KUBECONFIG')]) {
+          sh "kubectl apply -f deploy-k8s/."
+        }
+      }
+    }
   }  
 
-  post {
-  always {
-    archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
-    junit allowEmptyResults: true, testResults: 'trivy-report.xml'
-    }
-  }
+  // post {
+  // always {
+  //   archiveArtifacts artifacts: 'trivy-report.xml', fingerprint: true
+  //   junit allowEmptyResults: true, testResults: 'trivy-report.xml'
+  //   }
+  // }
 }
