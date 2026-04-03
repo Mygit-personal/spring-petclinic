@@ -2,10 +2,10 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: myspc-pod
-  label:
+  labels:
     app: spc
 spec:
-  container:
+  containers:
     - name: my-spc-container
       image: "984912521466.dkr.ecr.ap-south-1.amazonaws.com/spc/image:latest"
       ports:
