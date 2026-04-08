@@ -131,7 +131,7 @@ pipeline{
         steps {
           script {
             def buildScript = load "my-shared-library/vars/build.groovy"
-            build()
+            buildScript()
           }
         }
       }
