@@ -116,7 +116,7 @@
 
 
 
-@Library('shared-library@main@latest') _
+@Library('shared-lb@main') _
 pipeline{
   agent {label 'SPC'}
     stages{
