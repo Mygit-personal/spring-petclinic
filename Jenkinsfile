@@ -116,7 +116,7 @@
 
 
 
-// @Library('shared-library') _
+@Library('shared-library') _
 pipeline{
   agent {label 'SPC'}
     stages{
@@ -129,10 +129,7 @@ pipeline{
       }
       stage ("build") {
         steps {
-          script {
-            def buildScript = load "my-shared-library/vars/build.groovy"
-            buildScript()
-          }
+          build()
         }
       }
     }
