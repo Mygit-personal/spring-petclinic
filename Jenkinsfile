@@ -139,7 +139,11 @@
 
 pipeline {
   agent {label "SPC"}
-  
+
+  environment {
+    image_name = 'spc'
+    tag_name = '1.0'
+  } 
   
   triggers {
     pollSCM("* * * * *")
@@ -181,5 +185,15 @@ pipeline {
         }}
       }
     }
+
+
+    stage ('docker image') {
+      steps {
+        sh 'docker image build -t ${image_name}:${tag_name} .'
+      }
+    }
+
+
+
   }
 }
