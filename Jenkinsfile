@@ -114,23 +114,72 @@
 //   // }
 // }
 
+# shared library
 
+// @Library('shared-lb-1@main') _
+// pipeline{
+//   agent {label 'SPC'}
+//     stages{
+//       stage ('git checkout'){
+//         steps {
+//           git url: "https://github.com/Mygit-personal/spring-petclinic.git",
+//             branch: "main"
 
-@Library('shared-lb-1@main') _
-pipeline{
-  agent {label 'SPC'}
-    stages{
-      stage ('git checkout'){
-        steps {
-          git url: "https://github.com/Mygit-personal/spring-petclinic.git",
-            branch: "main"
+//         }
+//       }
+//       stage ("build") {
+//         steps {
+//           mybuild()
+//         }
+//       }
+//     }
+// }
 
-        }
-      }
-      stage ("build") {
-        steps {
-          mybuild()
-        }
+# parallel jobs
+
+pipeline {
+  agent {label "SPC"}
+  
+  
+  triggers {
+    pollSCM("* * * * *")
+  }
+  stages {
+    stage ("git checkout") {
+      steps {
+        git url: "https://github.com/Mygit-personal/spring-petclinic.git",
+          branch: "main"
       }
     }
+
+    stage ("maven") {
+      when {
+        expression {
+          currentBuild.currentResult == null || currentBuild.currentResult == "SUCCESS"
+        }
+      }
+      steps {
+        sh "mvn package"
+      }
+    }
+
+    stage ("sonar scan") {
+      when {
+        expression {
+          currentBuild.currentResult == null || currentBuild.currentResult == "SUCCESS"
+        }
+      }
+      steps{
+        withCredentials([string(credentialsId: 'SONAR_ID', variable:"SONAR_TOKEN")]){
+        withSonarQubeEnv("Sonar"){
+          sh """mvn package sonar:sonar \
+              -Dsonar.projectKey=Mygit-personal_spring-petclinic \
+              -Dsonar.organization=mygit-personal \
+              -Dsonar.host.url=https://sonarcloud.io/ \
+              -Dsonar.login=$SONAR_TOKEN
+          """
+        }}
+      }
+    }
+  }
 }
