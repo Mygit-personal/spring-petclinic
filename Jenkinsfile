@@ -114,7 +114,7 @@
 //   // }
 // }
 
-# shared library
+// shared library
 
 // @Library('shared-lb-1@main') _
 // pipeline{
@@ -135,7 +135,7 @@
 //     }
 // }
 
-# parallel jobs
+//  parallel jobs
 
 pipeline {
   agent {label "SPC"}
