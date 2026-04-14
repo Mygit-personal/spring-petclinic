@@ -171,7 +171,7 @@ pipeline {
       }
       steps{
         withCredentials([string(credentialsId: 'SONAR_ID', variable:"SONAR_TOKEN")]){
-        withSonarQubeEnv("Sonar"){
+        withSonarQubeEnv("SONAR"){
           sh """mvn package sonar:sonar \
               -Dsonar.projectKey=Mygit-personal_spring-petclinic \
               -Dsonar.organization=mygit-personal \
