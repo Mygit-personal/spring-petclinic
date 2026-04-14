@@ -116,7 +116,7 @@
 
 
 
-@Library('shared-lb@main') _
+@Library('shared-lb-1@main') _
 pipeline{
   agent {label 'SPC'}
     stages{
@@ -129,7 +129,7 @@ pipeline{
       }
       stage ("build") {
         steps {
-          build1()
+          mybuild()
         }
       }
     }
